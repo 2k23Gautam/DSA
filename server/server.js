@@ -8,9 +8,9 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-  origin: 'https://dsa-blond-six.vercel.app', 
+  origin: ['https://dsa-blond-six.vercel.app', 'http://localhost:5173'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
   credentials: true
 };
 
@@ -25,8 +25,11 @@ app.use('/api/platforms', require('./routes/platforms'));
 app.use('/api/leetcode', require('./routes/leetcode'));
 
 // Serve uploaded profile images
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+// Use path.resolve to ensure absolute pathing
+const uploadsPath = path.resolve(__dirname, 'public/uploads');
+app.use('/uploads', express.static(uploadsPath));
 
+// API health check
 app.get('/api/test', (req, res) => res.json({ message: 'API is working' }));
 
 // Connect to MongoDB
