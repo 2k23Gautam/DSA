@@ -8,6 +8,9 @@ const STORAGE_KEY = 'dsa_tracker_v1';
 const THEME_KEY   = 'dsa_theme';
 const DISMISSED_KEY = 'dsa_dismissed_slugs';
 
+// Define the base API URL
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 function genId() {
   return Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
 }
@@ -26,7 +29,7 @@ export function StoreProvider({ children }) {
     }
     const fetchProblems = async () => {
       try {
-        const res = await fetch('/api/problems', {
+        const res = await fetch(`${API_BASE_URL}/api/problems`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -44,7 +47,7 @@ export function StoreProvider({ children }) {
     if (!token) return null;
     try {
       const p = { ...data, revisionCount: data.revisionCount ?? 0 };
-      const res = await fetch('/api/problems', {
+      const res = await fetch(`${API_BASE_URL}/api/problems`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +76,7 @@ export function StoreProvider({ children }) {
   const updateProblem = useCallback(async (id, updates) => {
     if (!token) return null;
     try {
-      const res = await fetch(`/api/problems/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/problems/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +105,7 @@ export function StoreProvider({ children }) {
   const deleteProblem = useCallback(async (id) => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/problems/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/problems/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -219,7 +222,7 @@ export function StoreProvider({ children }) {
 
       // 1. LeetCode
       if (authUser?.leetcodeUsername) {
-        const res = await fetch(`/api/leetcode/recent/${authUser.leetcodeUsername}`, {
+        const res = await fetch(`${API_BASE_URL}/api/leetcode/recent/${authUser.leetcodeUsername}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -323,12 +326,12 @@ export function StoreProvider({ children }) {
     lastSyncAtRef.current = now;
     try {
       if (user?.leetcodeUsername) {
-        const res = await fetch(`/api/leetcode/stats/${user.leetcodeUsername}`, {
+        const res = await fetch(`${API_BASE_URL}/api/leetcode/stats/${user.leetcodeUsername}`, {
           headers: { 'Authorization': `Bearer ${tok}` }
         });
         if (res.ok) {
           const stats = await res.json();
-          const syncRes = await fetch('/api/leetcode/sync', {
+          const syncRes = await fetch(`${API_BASE_URL}/api/leetcode/sync`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tok}` },
             body: JSON.stringify({ leetcodeUsername: user.leetcodeUsername, stats })
