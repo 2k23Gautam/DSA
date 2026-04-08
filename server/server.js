@@ -7,16 +7,14 @@ const path = require('path');
 const app = express();
 
 // Middleware
-// Change this in server/server.js
 const corsOptions = {
-  origin: 'https://dsa-blond-six.vercel.app/', // Your Vercel URL
+  origin: 'https://dsa-blond-six.vercel.app', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
 
 app.use(cors(corsOptions));
-
 app.use(express.json());
 
 // Routes
@@ -42,15 +40,8 @@ if (process.env.MONGO_URI) {
 
 const PORT = process.env.PORT || 10000;
 
-// Update to serve frontend in production
-const distPath = path.join(__dirname, '../dist');
-
-// Serve static files from the Vite build directory
-app.use(express.static(distPath));
-
-// Handle React routing, return all requests to React app (except API)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+app.get('/', (req, res) => {
+  res.json({ message: 'DSA Tracker API is live' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
