@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { X, Save, Trash2, Sparkles, Loader2, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
-import { useStore } from '../store/StoreContext.jsx';
+import { buildApiUrl, useStore } from '../store/StoreContext.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import { PLATFORMS, DIFFICULTIES, STATUSES, TOPICS, PATTERNS, TIME_COMPLEXITIES, SPACE_COMPLEXITIES } from '../store/data.js';
 import TagInput from './TagInput.jsx';
@@ -63,7 +63,7 @@ export default function ProblemModal({ open, onClose, editProblem = null, initia
     setStatementStatus('fetching');
     fetchDebounceRef.current = setTimeout(async () => {
       try {
-        const res = await fetch('/api/problems/fetch-statement', {
+        const res = await fetch(buildApiUrl('/api/problems/fetch-statement'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export default function ProblemModal({ open, onClose, editProblem = null, initia
 
     setIsAiLoading(true);
     try {
-      const res = await fetch('/api/problems/ai-suggest', {
+      const res = await fetch(buildApiUrl('/api/problems/ai-suggest'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

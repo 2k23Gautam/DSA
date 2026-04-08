@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Target, CheckCircle2, TrendingUp } from 'lucide-react';
 import { useAuth } from '../store/AuthContext.jsx';
 import { BAR_COLORS } from '../store/data.js';
+import { buildApiUrl } from '../store/StoreContext.jsx';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function FriendProfile() {
@@ -15,7 +16,7 @@ export default function FriendProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`/api/users/profile/${id}`, {
+        const res = await fetch(buildApiUrl(`/api/users/profile/${id}`), {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

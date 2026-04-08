@@ -9,7 +9,17 @@ const THEME_KEY   = 'dsa_theme';
 const DISMISSED_KEY = 'dsa_dismissed_slugs';
 
 // Define the base API URL
-export const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
+export function buildApiUrl(path) {
+  return `${API_BASE_URL}${path}`;
+}
+
+export function buildAssetUrl(path) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+}
 
 function genId() {
   return Math.random().toString(36).slice(2, 9) + Date.now().toString(36);

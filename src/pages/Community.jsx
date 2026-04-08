@@ -3,6 +3,7 @@ import { Search, UserPlus, Users, Trophy, ShieldCheck, Globe, ExternalLink, User
 import CircularProgressComp from '../components/CircularProgress.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext.jsx';
+import { buildApiUrl } from '../store/StoreContext.jsx';
 import toast from 'react-hot-toast';
 import Friends from './Friends.jsx';
 
@@ -36,7 +37,7 @@ export default function Community() {
   const performSearch = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/users/search?q=${query}`, {
+      const res = await fetch(buildApiUrl(`/api/users/search?q=${encodeURIComponent(query)}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -51,7 +52,7 @@ export default function Community() {
 
   const fetchFriends = async () => {
     try {
-      const res = await fetch('/api/users/friends', {
+      const res = await fetch(buildApiUrl('/api/users/friends'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -69,7 +70,7 @@ export default function Community() {
   const handleRemoveFriend = async (e, friendId) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`/api/users/remove-friend/${friendId}`, {
+      const res = await fetch(buildApiUrl(`/api/users/remove-friend/${friendId}`), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -85,7 +86,7 @@ export default function Community() {
 
   const sendRequest = async (userId) => {
     try {
-      const res = await fetch(`/api/users/friend-request/${userId}`, {
+      const res = await fetch(buildApiUrl(`/api/users/friend-request/${userId}`), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

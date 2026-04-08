@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { format, subDays, subMonths } from 'date-fns';
 import { Target, CheckCircle2, Flame, TrendingUp, Globe, ExternalLink, CalendarDays } from 'lucide-react';
-import { useStore } from '../store/StoreContext.jsx';
+import { buildApiUrl, useStore } from '../store/StoreContext.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import ProblemModal from '../components/ProblemModal.jsx';
@@ -35,7 +35,7 @@ export default function Dashboard() {
   const fetchContests = async () => {
     setContestError(false);
     try {
-      const res = await fetch('/api/platforms/contests', {
+      const res = await fetch(buildApiUrl('/api/platforms/contests'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -57,7 +57,7 @@ export default function Dashboard() {
   const handleRegister = async (contestId, link) => {
     window.open(link, '_blank');
     try {
-      await fetch('/api/platforms/contests/dismiss', {
+      await fetch(buildApiUrl('/api/platforms/contests/dismiss'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

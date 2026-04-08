@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { User, Mail, Globe, Save, RefreshCw, CheckCircle2, AlertCircle, Camera, Upload, Settings, Link } from 'lucide-react';
 import { useAuth } from '../store/AuthContext.jsx';
-import { useStore } from '../store/StoreContext.jsx';
+import { buildApiUrl, buildAssetUrl, useStore } from '../store/StoreContext.jsx';
 import toast from 'react-hot-toast';
 
 export default function Profile() {
@@ -18,7 +18,7 @@ export default function Profile() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/users/update-handles', {
+      const res = await fetch(buildApiUrl('/api/users/update-handles'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function Profile() {
     formDataUpload.append('image', file);
 
     try {
-      const res = await fetch('/api/users/profile-image', {
+      const res = await fetch(buildApiUrl('/api/users/profile-image'), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formDataUpload
@@ -94,7 +94,7 @@ export default function Profile() {
         <div className="relative group">
           <div className="w-32 h-32 rounded-3xl bg-brand-500 flex items-center justify-center text-white text-4xl font-black border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 overflow-hidden">
             {authUser?.profileImage ? (
-              <img src={authUser.profileImage} alt="Profile" className="w-full h-full object-cover" />
+              <img src={buildAssetUrl(authUser.profileImage)} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               authUser?.name?.[0]?.toUpperCase()
             )}

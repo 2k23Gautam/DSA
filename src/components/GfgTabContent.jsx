@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { buildApiUrl } from '../store/StoreContext.jsx';
 
 export default function GfgTabContent({ handle, token }) {
   const [data, setData] = useState(null);
@@ -13,7 +14,7 @@ export default function GfgTabContent({ handle, token }) {
     setError(false);
 
     // Fetch via our backend proxy to avoid GFG CORS restrictions
-    fetch(`/api/platforms/gfg/${handle}`, {
+    fetch(buildApiUrl(`/api/platforms/gfg/${handle}`), {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => {

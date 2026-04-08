@@ -3,6 +3,7 @@ import { useAuth } from '../store/AuthContext.jsx';
 import { Users, UserPlus, UserMinus, Check, X, ShieldCheck, Globe, Trophy, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '../components/CircularProgress.jsx';
+import { buildApiUrl } from '../store/StoreContext.jsx';
 import toast from 'react-hot-toast';
 
 export default function Friends() {
@@ -20,8 +21,8 @@ export default function Friends() {
     setLoading(true);
     try {
       const [friendsRes, requestsRes] = await Promise.all([
-        fetch('/api/users/friends', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('/api/users/pending-requests', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(buildApiUrl('/api/users/friends'), { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(buildApiUrl('/api/users/pending-requests'), { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
 
       if (friendsRes.ok) {
@@ -41,7 +42,7 @@ export default function Friends() {
 
   const handleAccept = async (requestId) => {
     try {
-      const res = await fetch(`/api/users/accept-request/${requestId}`, {
+      const res = await fetch(buildApiUrl(`/api/users/accept-request/${requestId}`), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -57,7 +58,7 @@ export default function Friends() {
 
   const handleReject = async (requestId) => {
     try {
-      const res = await fetch(`/api/users/reject-request/${requestId}`, {
+      const res = await fetch(buildApiUrl(`/api/users/reject-request/${requestId}`), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -74,7 +75,7 @@ export default function Friends() {
   const handleRemoveFriend = async (e, friendId) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`/api/users/remove-friend/${friendId}`, {
+      const res = await fetch(buildApiUrl(`/api/users/remove-friend/${friendId}`), {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

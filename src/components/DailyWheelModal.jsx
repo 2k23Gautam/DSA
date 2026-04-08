@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useStore } from '../store/StoreContext.jsx';
+import { buildApiUrl, useStore } from '../store/StoreContext.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import { Sparkles, Trophy, Globe, Flame, CheckCircle2 } from 'lucide-react';
 import ProblemModal from './ProblemModal.jsx';
@@ -74,7 +74,7 @@ export default function DailyWheelModal({ open, onClose }) {
       setSpinResult(chosenTopic);
 
       try {
-        const res = await fetch('/api/users/daily-challenge/spin', {
+        const res = await fetch(buildApiUrl('/api/users/daily-challenge/spin'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function DailyWheelModal({ open, onClose }) {
 
   const completeChallenge = async () => {
     try {
-      const res = await fetch('/api/users/daily-challenge/complete', {
+      const res = await fetch(buildApiUrl('/api/users/daily-challenge/complete'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

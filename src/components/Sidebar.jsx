@@ -6,7 +6,7 @@ import { X, LayoutDashboard, List, User, Users, Trello,
   AlertTriangle, Zap, CalendarDays, Sun, Moon,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { useStore } from '../store/StoreContext.jsx';
+import { buildAssetUrl, useStore } from '../store/StoreContext.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import Logo from './Logo.jsx';
 
@@ -99,7 +99,7 @@ export default function Sidebar({ isOpen, onClose }) {
         >
           <div className="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-black text-sm border-2 border-white dark:border-slate-900 shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
             {authUser?.profileImage ? (
-              <img src={authUser.profileImage} alt="Profile" className="w-full h-full object-cover" />
+              <img src={buildAssetUrl(authUser.profileImage)} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               authUser?.name?.[0]?.toUpperCase() || 'U'
             )}
