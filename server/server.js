@@ -6,80 +6,52 @@ const path = require('path');
 
 const app = express();
 
-// Request logging for debugging production issues
+// DEBUGGING: Log every incoming request
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log(`Origin: ${req.get('origin')}`);
   next();
 });
 
-// Robust CORS configuration
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, or same-origin)
-    if (!origin) return callback(null, true);
-    
-    const allowedPatterns = [
-      'vercel.app',
-      'localhost',
-      '127.0.0.1'
-    ];
-    
-    const isAllowed = allowedPatterns.some(pattern => origin.includes(pattern));
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS blocked for origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// BULLETPROOF CORS - Using a simple setup to first confirm connectivity
+app.use(cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/problems', require('./routes/problems'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/platforms', require('./routes/platforms'));
-app.use('/api/leetcode', require('./routes/leetcode'));
+// USE ABSOLUTE PATHS FOR ROUTES (Fixes 404s on Render)
+// __dirname is the directory of the current file (server/)
+const authRoutes = require(path.resolve(__dirname, 'routes/auth'));
+const probRoutes = require(path.resolve(__dirname, 'routes/problems'));
+const userBaseRoutes = require(path.resolve(__dirname, 'routes/users'));
+const platformRoutes = require(path.resolve(__dirname, 'routes/platforms'));
+const leetcodeRoutes = require(path.resolve(__dirname, 'routes/leetcode'));
 
-// Serve uploaded profile images
-const uploadsPath = path.resolve(__dirname, 'public/uploads');
-app.use('/uploads', express.static(uploadsPath));
+app.use('/api/auth', authRoutes);
+app.use('/api/problems', probRoutes);
+app.use('/api/users', userBaseRoutes);
+app.use('/api/platforms', platformRoutes);
+app.use('/api/leetcode', leetcodeRoutes);
 
-// API health check
-app.get('/api/test', (req, res) => res.json({ message: 'API is working' }));
+// Fix Static Uploads
+app.use('/uploads', express.static(path.resolve(__dirname, 'public/uploads')));
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'DSA Tracker API is live',
-    timestamp: new Date().toISOString(),
-    status: 'Operational'
-  });
-});
+app.get('/api/test', (req, res) => res.json({ status: "ok" }));
+app.get('/', (req, res) => res.send("API IS RUNNING"));
 
-// Connect to MongoDB
+// MONGODB
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Atlas Connected'))
-    .catch(err => {
-      console.error('MongoDB Connection Error:');
-      console.error(err);
-    });
+    .catch(err => console.error('DB ERROR:', err));
 } else {
-  console.error('CRITICAL: MONGO_URI is missing in environment variables.');
+  console.error('CRITICAL: MONGO_URI is missing');
 }
 
 const PORT = process.env.PORT || 10000;
-
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
