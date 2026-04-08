@@ -7,7 +7,16 @@ const path = require('path');
 const app = express();
 
 // Middleware
-app.use(cors());
+// Change this in server/server.js
+const corsOptions = {
+  origin: 'https://dsa-blond-six.vercel.app/', // Your Vercel URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // Routes
